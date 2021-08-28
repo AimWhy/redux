@@ -1,7 +1,7 @@
 ---
 id: store
 title: Store
-hide_title: true
+description: 'API > Store: the core Redux store methods'
 ---
 
 # Store
@@ -35,6 +35,8 @@ It is equal to the last value returned by the store's reducer.
 _(any)_: The current state tree of your application.
 
 ---
+
+&nbsp;
 
 ### dispatch(action)
 
@@ -84,6 +86,8 @@ store.dispatch(addTodo('Read about the middleware'))
 ```
 
 ---
+
+&nbsp;
 
 ### subscribe(listener)
 
@@ -136,6 +140,8 @@ unsubscribe()
 ```
 
 ---
+
+&nbsp;
 
 ### replaceReducer(nextReducer)
 

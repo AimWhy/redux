@@ -14,20 +14,21 @@ import {
  * and state.
  */
 function logger() {
-  const loggerMiddleware: Middleware = ({ getState }: MiddlewareAPI) => (
-    next: Dispatch
-  ) => action => {
-    console.log('will dispatch', action)
+  const loggerMiddleware: Middleware =
+    ({ getState }: MiddlewareAPI) =>
+    (next: Dispatch) =>
+    action => {
+      console.log('will dispatch', action)
 
-    // Call the next dispatch method in the middleware chain.
-    const returnValue = next(action)
+      // Call the next dispatch method in the middleware chain.
+      const returnValue = next(action)
 
-    console.log('state after dispatch', getState())
+      console.log('state after dispatch', getState())
 
-    // This will likely be the action itself, unless
-    // a middleware further in chain changed it.
-    return returnValue
-  }
+      // This will likely be the action itself, unless
+      // a middleware further in chain changed it.
+      return returnValue
+    }
 
   return loggerMiddleware
 }
@@ -39,18 +40,17 @@ function logger() {
 type PromiseDispatch = <T extends Action>(promise: Promise<T>) => Promise<T>
 
 function promise() {
-  const promiseMiddleware: Middleware<PromiseDispatch> = ({
-    dispatch
-  }: MiddlewareAPI) => next => <T extends Action>(
-    action: AnyAction | Promise<T>
-  ) => {
-    if (action instanceof Promise) {
-      action.then(dispatch)
-      return action
-    }
+  const promiseMiddleware: Middleware<PromiseDispatch> =
+    ({ dispatch }: MiddlewareAPI) =>
+    next =>
+    <T extends Action>(action: AnyAction | Promise<T>) => {
+      if (action instanceof Promise) {
+        action.then(dispatch)
+        return action
+      }
 
-    return next(action)
-  }
+      return next(action)
+    }
 
   return promiseMiddleware
 }
@@ -72,10 +72,13 @@ function thunk<S, DispatchExt>() {
     ThunkDispatch<S, DispatchExt>,
     S,
     Dispatch & ThunkDispatch<S>
-  > = api => (next: Dispatch) => <R>(action: AnyAction | Thunk<R, any>) =>
-    typeof action === 'function'
-      ? action(api.dispatch, api.getState)
-      : next(action)
+  > =
+    api =>
+    (next: Dispatch) =>
+    <R>(action: AnyAction | Thunk<R, any>) =>
+      typeof action === 'function'
+        ? action(api.dispatch, api.getState)
+        : next(action)
 
   return thunkMiddleware
 }
@@ -86,15 +89,14 @@ function thunk<S, DispatchExt>() {
 function customState() {
   type State = { field: 'string' }
 
-  const customMiddleware: Middleware<{}, State> = api => (
-    next: Dispatch
-  ) => action => {
-    api.getState().field
-    // typings:expect-error
-    api.getState().wrongField
+  const customMiddleware: Middleware<{}, State> =
+    api => (next: Dispatch) => action => {
+      api.getState().field
+      // @ts-expect-error
+      api.getState().wrongField
 
-    return next(action)
-  }
+      return next(action)
+    }
 
   return customMiddleware
 }
@@ -108,14 +110,13 @@ function customDispatch() {
   // dispatch that expects action union
   type MyDispatch = Dispatch<MyAction>
 
-  const customDispatch: Middleware = (
-    api: MiddlewareAPI<MyDispatch>
-  ) => next => action => {
-    api.dispatch({ type: 'INCREMENT' })
-    api.dispatch({ type: 'DECREMENT' })
-    // typings:expect-error
-    api.dispatch({ type: 'UNKNOWN' })
-  }
+  const customDispatch: Middleware =
+    (api: MiddlewareAPI<MyDispatch>) => next => action => {
+      api.dispatch({ type: 'INCREMENT' })
+      api.dispatch({ type: 'DECREMENT' })
+      // @ts-expect-error
+      api.dispatch({ type: 'UNKNOWN' })
+    }
 }
 
 /**
@@ -133,9 +134,9 @@ function apply() {
   const storeWithLogger = createStore(reducer, applyMiddleware(logger()))
   // can only dispatch actions
   storeWithLogger.dispatch({ type: 'INCREMENT' })
-  // typings:expect-error
+  // @ts-expect-error
   storeWithLogger.dispatch(Promise.resolve({ type: 'INCREMENT' }))
-  // typings:expect-error
+  // @ts-expect-error
   storeWithLogger.dispatch('not-an-action')
 
   /**
@@ -145,9 +146,9 @@ function apply() {
   // can dispatch actions and promises
   storeWithPromise.dispatch({ type: 'INCREMENT' })
   storeWithPromise.dispatch(Promise.resolve({ type: 'INCREMENT' }))
-  // typings:expect-error
+  // @ts-expect-error
   storeWithPromise.dispatch('not-an-action')
-  // typings:expect-error
+  // @ts-expect-error
   storeWithPromise.dispatch(Promise.resolve('not-an-action'))
 
   /**
@@ -160,9 +161,9 @@ function apply() {
   // can dispatch actions and promises
   storeWithPromiseAndLogger.dispatch({ type: 'INCREMENT' })
   storeWithPromiseAndLogger.dispatch(Promise.resolve({ type: 'INCREMENT' }))
-  // typings:expect-error
+  // @ts-expect-error
   storeWithPromiseAndLogger.dispatch('not-an-action')
-  // typings:expect-error
+  // @ts-expect-error
   storeWithPromiseAndLogger.dispatch(Promise.resolve('not-an-action'))
 
   /**
@@ -177,19 +178,19 @@ function apply() {
   storeWithPromiseAndThunk.dispatch(Promise.resolve({ type: 'INCREMENT' }))
   storeWithPromiseAndThunk.dispatch((dispatch, getState) => {
     getState().someField
-    // typings:expect-error
+    // @ts-expect-error
     getState().wrongField
 
     // injected dispatch accepts actions, thunks and promises
     dispatch({ type: 'INCREMENT' })
     dispatch(dispatch => dispatch({ type: 'INCREMENT' }))
     dispatch(Promise.resolve({ type: 'INCREMENT' }))
-    // typings:expect-error
+    // @ts-expect-error
     dispatch('not-an-action')
   })
-  // typings:expect-error
+  // @ts-expect-error
   storeWithPromiseAndThunk.dispatch('not-an-action')
-  // typings:expect-error
+  // @ts-expect-error
   storeWithPromiseAndThunk.dispatch(Promise.resolve('not-an-action'))
 
   /**

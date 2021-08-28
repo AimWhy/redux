@@ -2,13 +2,10 @@
 id: part-5-async-logic
 title: 'Redux Essentials, Part 5: Async Logic and Data Fetching'
 sidebar_label: 'Async Logic and Data Fetching'
-hide_title: true
 description: 'The official Redux Essentials tutorial: learn how async logic works in Redux apps'
 ---
 
 import { DetailedExplanation } from '../../components/DetailedExplanation'
-
-# Redux Essentials, Part 5: Async Logic and Data Fetching
 
 :::tip What You'll Learn
 
@@ -107,6 +104,19 @@ store.dispatch(logAndAdd(5))
 
 Thunks are typically written in "slice" files. `createSlice` itself does not have any special support for defining thunks, so you should write them as separate functions in the same slice file. That way, they have access to the plain action creators for that slice, and it's easy to find where the thunk lives.
 
+:::info
+
+The word "thunk" is a programming term that means ["a piece of code that does some delayed work"](https://en.wikipedia.org/wiki/Thunk). For more details on how to use thunks, see the thunk usage guide page:
+
+- [Using Redux: Writing Logic with Thunks](../../usage/writing-logic-thunks.mdx)
+
+as well as these posts:
+
+- [What the heck is a thunk?](https://daveceddia.com/what-is-a-thunk/)
+- [Thunks in Redux: the basics](https://medium.com/fullstack-academy/thunks-in-redux-the-basics-85e538a3fe60)
+
+:::
+
 ### Writing Async Thunks
 
 Thunks may have async logic inside of them, such as `setTimeout`, `Promise`s, and `async/await`. This makes them a good place to put AJAX calls to a server API.
@@ -157,6 +167,16 @@ However, writing code using this approach is tedious. Each separate type of requ
 `createAsyncThunk` abstracts this pattern by generating the action types and action creators, and generating a thunk that dispatches those actions automatically. You provide a callback function that makes the async call and returns a Promise with the result.
 
 </DetailedExplanation>
+
+<br />
+
+:::tip
+
+Redux Toolkit has a new [**RTK Query data fetching API**](https://redux-toolkit.js.org/rtk-query/overview). RTK Query is a purpose built data fetching and caching solution for Redux apps, and **can eliminate the need to write _any_ thunks or reducers to manage data fetching**. We encourage you to try it out and see if it can help simplify the data fetching code in your own apps!
+
+We'll be updating the Redux tutorials soon to include sections on using RTK Query. Until then, see [the RTK Query section in the Redux Toolkit docs](https://redux-toolkit.js.org/rtk-query/overview).
+
+:::
 
 ## Loading Posts
 

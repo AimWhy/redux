@@ -2,7 +2,6 @@
 id: part-7-standard-patterns
 title: 'Redux Fundamentals, Part 7: Standard Redux Patterns'
 sidebar_label: 'Standard Redux Patterns'
-hide_title: true
 description: 'The official Fundamentals tutorial for Redux: learn the standard patterns used in real-world Redux apps'
 ---
 
@@ -439,10 +438,9 @@ export const selectTodoById = (state, todoId) => {
 
 :::info
 
-To learn more about how to use Reselect and memoized selectors, see:
+For more details on why we use selector functions and how to write memoized selectors with Reselect, see:
 
-- The [Reselect docs](https://github.com/reduxjs/reselect)
-- [Idiomatic Redux: Using Reselect Selectors for Encapsulation and Performance](https://blog.isquaredsoftware.com/2017/12/idiomatic-redux-using-reselect-selectors/)
+- [Using Redux: Deriving Data with Selectors](../../usage/deriving-data-selectors.md)
 
 :::
 
@@ -865,7 +863,7 @@ For now, the important things to understand are:
 
 For more details on why normalization is useful with Redux, see:
 
-- [Structuring Reducers: Normalizing State Shape](../../recipes/structuring-reducers/NormalizingStateShape.md)
+- [Structuring Reducers: Normalizing State Shape](../../usage/structuring-reducers/NormalizingStateShape.md)
 
 :::
 

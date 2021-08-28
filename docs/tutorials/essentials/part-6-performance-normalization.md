@@ -2,13 +2,10 @@
 id: part-6-performance-normalization
 title: 'Redux Essentials, Part 6: Performance and Normalizing Data'
 sidebar_label: 'Performance and Normalizing Data'
-hide_title: true
 description: 'The official Redux Essentials tutorial: learn how to improve app performance and structure data correctly'
 ---
 
 import { DetailedExplanation } from '../../components/DetailedExplanation'
-
-# Redux Essentials, Part 6: Performance and Normalizing Data
 
 :::tip What You'll Learn
 
@@ -605,6 +602,14 @@ export const UserPage = ({ match }) => {
 
 Memoized selectors are a valuable tool for improving performance in a React+Redux application, because they can help us avoid unnecessary re-renders, and also avoid doing potentially complex or expensive calculations if the input data hasn't changed.
 
+:::info
+
+For more details on why we use selector functions and how to write memoized selectors with Reselect, see:
+
+- [Using Redux: Deriving Data with Selectors](../../usage/deriving-data-selectors.md)
+
+:::
+
 ### Investigating the Posts List
 
 If we go back to our `<PostsList>` and try clicking a reaction button on one of the posts while capturing a React profiler trace, we'll see that not only did the `<PostsList>` and the updated `<PostExcerpt>` instance render, _all_ of the `<PostExcerpt>` components rendered:
@@ -677,7 +682,7 @@ const userObject = state.users.entities[userId]
 
 :::info
 
-For more details on why normalizing state is useful, see [Normalizing State Shape](../../recipes/structuring-reducers/NormalizingStateShape.md) and the Redux Toolkit Usage Guide section on [Managing Normalized Data](https://redux-toolkit.js.org/usage/usage-guide#managing-normalized-data).
+For more details on why normalizing state is useful, see [Normalizing State Shape](../../usage/structuring-reducers/NormalizingStateShape.md) and the Redux Toolkit Usage Guide section on [Managing Normalized Data](https://redux-toolkit.js.org/usage/usage-guide#managing-normalized-data).
 
 :::
 
@@ -888,10 +893,8 @@ const usersSlice = createSlice({
 export default usersSlice.reducer
 
 // highlight-start
-export const {
-  selectAll: selectAllUsers,
-  selectById: selectUserById
-} = usersAdapter.getSelectors(state => state.users)
+export const { selectAll: selectAllUsers, selectById: selectUserById } =
+  usersAdapter.getSelectors(state => state.users)
 // highlight-end
 ```
 
@@ -952,9 +955,8 @@ export const { allNotificationsRead } = notificationsSlice.actions
 export default notificationsSlice.reducer
 
 // highlight-start
-export const {
-  selectAll: selectAllNotifications
-} = notificationsAdapter.getSelectors(state => state.notifications)
+export const { selectAll: selectAllNotifications } =
+  notificationsAdapter.getSelectors(state => state.notifications)
 // highlight-end
 ```
 
@@ -1008,7 +1010,7 @@ The concepts we've covered in this tutorial should be enough to get you started 
 
 The Redux Essentials tutorial focused on "how to use Redux correctly", rather than "how it works" or "why it works this way". In particular, Redux Toolkit is a higher-level set of abstractions and utilities, and it's helpful to understand what the abstractions in RTK are actually doing for you. Reading through the ["Redux Fundamentals" tutorial](../fundamentals/part-1-overview.md) will help you understand how to write Redux code "by hand", and why we recommend Redux Toolkit as the default way to write Redux logic.
 
-The [Recipes](../../recipes/README.md) section has information on a number of important concepts, like [how to structure your reducers](../../recipes/structuring-reducers/StructuringReducers.md), and [our Style Guide page](../../style-guide/style-guide) has important information on our recommended patterns and best practices.
+The [Using Redux](../../usage/index.md) section has information on a number of important concepts, like [how to structure your reducers](../../usage/structuring-reducers/StructuringReducers.md), and [our Style Guide page](../../style-guide/style-guide) has important information on our recommended patterns and best practices.
 
 If you'd like to know more about _why_ Redux exists, what problems it tries to solve, and how it's meant to be used, see Redux maintainer Mark Erikson's posts on [The Tao of Redux, Part 1: Implementation and Intent](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-1/) and [The Tao of Redux, Part 2: Practice and Philosophy](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/).
 

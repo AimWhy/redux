@@ -2,7 +2,6 @@
 id: part-8-modern-redux
 title: 'Redux Fundamentals, Part 8: Modern Redux with Redux Toolkit'
 sidebar_label: 'Modern Redux with Redux Toolkit'
-hide_title: true
 description: 'The official Fundamentals tutorial for Redux: learn the modern way to write Redux logic'
 ---
 
@@ -354,9 +353,7 @@ Let's start converting our todos slice file to use `createSlice` instead. We'll 
 
 ```js title="src/features/todos/todosSlice.js"
 // highlight-next-line
-import { createSlice, createSelector } from '@reduxjs/toolkit'
-import { client } from '../../api/client'
-import { StatusFilters } from '../filters/filtersSlice'
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   status: 'idle',
@@ -423,12 +420,8 @@ const todosSlice = createSlice({
   }
 })
 
-export const {
-  todoAdded,
-  todoToggled,
-  todoColorSelected,
-  todoDeleted
-} = todosSlice.actions
+export const { todoAdded, todoToggled, todoColorSelected, todoDeleted } =
+  todosSlice.actions
 
 export default todosSlice.reducer
 ```
@@ -458,6 +451,14 @@ Here's how our code looks with all the slices converted:
 We've seen how we can [write thunks that dispatch "loading", "request succeeded", and "request failed" actions](./part-7-standard-patterns.md#loading-state-enum-values). We had to write action creators, action types, _and_ reducers to handle those cases.
 
 Because this pattern is so common, **Redux Toolkit has a `createAsyncThunk` API that will generate these thunks for us**. It also generates the action types and action creators for those different request status actions, and dispatches those actions automatically based on the resulting `Promise`.
+
+:::tip
+
+Redux Toolkit has a new [**RTK Query data fetching API**](https://redux-toolkit.js.org/rtk-query/overview). RTK Query is a purpose built data fetching and caching solution for Redux apps, and **can eliminate the need to write _any_ thunks or reducers to manage data fetching**. We encourage you to try it out and see if it can help simplify the data fetching code in your own apps!
+
+We'll be updating the Redux tutorials soon to include sections on using RTK Query. Until then, see [the RTK Query section in the Redux Toolkit docs](https://redux-toolkit.js.org/rtk-query/overview).
+
+:::
 
 ### Using `createAsyncThunk`
 
@@ -753,10 +754,8 @@ export const {
 export default todosSlice.reducer
 
 // highlight-start
-export const {
-  selectAll: selectTodos,
-  selectById: selectTodoById
-} = todosAdapter.getSelectors(state => state.todos)
+export const { selectAll: selectTodos, selectById: selectTodoById } =
+  todosAdapter.getSelectors(state => state.todos)
 // highlight-end
 
 export const selectTodoIds = createSelector(
@@ -869,7 +868,7 @@ However, our [**"Redux Essentials" tutorial**](../essentials/part-1-overview-con
 
 At the same time, the concepts we've covered in this tutorial should be enough to get you started building your own applications using React and Redux. Now's a great time to try working on a project yourself to solidify these concepts and see how they work in practice. If you're not sure what kind of a project to build, see [this list of app project ideas](https://github.com/florinpop17/app-ideas) for some inspiration.
 
-The [Recipes](../../recipes/README.md) section has information on a number of important concepts, like [how to structure your reducers](../../recipes/structuring-reducers/StructuringReducers.md), and [**our Style Guide page**](../../style-guide/style-guide) has important information on our recommended patterns and best practices.
+The [Using Redux](../../usage/index.md) section has information on a number of important concepts, like [how to structure your reducers](../../usage/structuring-reducers/StructuringReducers.md), and [**our Style Guide page**](../../style-guide/style-guide) has important information on our recommended patterns and best practices.
 
 If you'd like to know more about _why_ Redux exists, what problems it tries to solve, and how it's meant to be used, see Redux maintainer Mark Erikson's posts on [The Tao of Redux, Part 1: Implementation and Intent](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-1/) and [The Tao of Redux, Part 2: Practice and Philosophy](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/).
 

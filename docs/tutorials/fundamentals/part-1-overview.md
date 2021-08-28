@@ -2,7 +2,6 @@
 id: part-1-overview
 title: 'Redux Fundamentals, Part 1: Redux Overview'
 sidebar_label: 'Redux Overview'
-hide_title: true
 description: 'The official Fundamentals tutorial for Redux: learn the fundamentals of using Redux'
 ---
 
@@ -77,7 +76,7 @@ Redux helps you manage "global" state - state that is needed across many parts o
 
 ### When Should I Use Redux?
 
-Redux helps you deal with shared state management, but like any tool, it has tradeoffs. There's more concepts to learn, and more code to write. It also adds some indirection to your code, and asks you to follow certain restrictions. It's a trade-off between short term and long term productivity.
+Redux helps you deal with shared state management, but like any tool, it has tradeoffs. There are more concepts to learn, and more code to write. It also adds some indirection to your code, and asks you to follow certain restrictions. It's a trade-off between short term and long term productivity.
 
 Redux is more useful when:
 

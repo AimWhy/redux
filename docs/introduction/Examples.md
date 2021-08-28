@@ -2,7 +2,6 @@
 id: examples
 title: Examples
 description: 'Introduction > Examples: Redux interactive example apps'
-hide_title: true
 ---
 
 # Examples
@@ -83,24 +82,6 @@ Or check out the [sandbox](https://codesandbox.io/s/github/reduxjs/redux/tree/ma
 <iframe class="codesandbox"src="https://codesandbox.io/embed/github/reduxjs/redux/tree/master/examples/todos-with-undo/?runonclick=1"sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
 
 This is a variation on the previous example. It is almost identical, but additionally shows how wrapping your reducer with [Redux Undo](https://github.com/omnidan/redux-undo) lets you add a Undo/Redo functionality to your app with a few lines of code.
-
-## Todos w/ Flow
-
-Run the [Todos w/ Flow](https://github.com/reduxjs/redux/tree/master/examples/todos-flow) example:
-
-```sh
-git clone https://github.com/reduxjs/redux.git
-
-cd redux/examples/todos-flow
-npm install
-npm start
-```
-
-Or check out the [sandbox](https://codesandbox.io/s/github/reduxjs/redux/tree/master/examples/todos-flow):
-
-<iframe class="codesandbox"src="https://codesandbox.io/embed/github/reduxjs/redux/tree/master/examples/todos-flow/?runonclick=1"sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
-
-This is like the previous Todos examples, but shows how to use Redux in conjunction with [Flow](https://flow.org/).
 
 ## TodoMVC
 
@@ -190,7 +171,7 @@ npm install
 npm start
 ```
 
-This is a basic demonstration of [server rendering](../recipes/ServerRendering.md) with Redux and React. It shows how to prepare the initial store state on the server, and pass it down to the client so the client store can boot up from an existing state.
+This is a basic demonstration of [server rendering](../usage/ServerRendering.md) with Redux and React. It shows how to prepare the initial store state on the server, and pass it down to the client so the client store can boot up from an existing state.
 
 ## Real World
 

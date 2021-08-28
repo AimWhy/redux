@@ -2,13 +2,10 @@
 id: part-4-using-data
 title: 'Redux Essentials, Part 4: Using Redux Data'
 sidebar_label: 'Using Redux Data'
-hide_title: true
 description: 'The official Redux Essentials tutorial: learn how to work with complex Redux state in React components'
 ---
 
 import { DetailedExplanation } from '../../components/DetailedExplanation'
-
-# Redux Essentials, Part 4: Using Redux Data
 
 :::tip What You'll Learn
 
@@ -87,7 +84,7 @@ It's possible that we might not have a matching post entry in the store - maybe 
 
 Assuming we do have the right post object in the store, `useSelector` will return that, and we can use it to render the title and content of the post in the page.
 
-You might notice that this looks fairly similar to the logic we have in the body of our `<PostsList>` component, where we loop over the whole `posts` array to show post excerpts the main feed. We _could_ try to extract a `Post` component that could be used in both places, but there are already some differences in how we're showing a post excerpt and the whole post. It's usually better to keep writing things separately for a while even if there's some duplication, and then we can decide later if the different sections of code are similar enough that we can really extract a reusable component.
+You might notice that this looks fairly similar to the logic we have in the body of our `<PostsList>` component, where we loop over the whole `posts` array to show post excerpts on the main feed. We _could_ try to extract a `Post` component that could be used in both places, but there are already some differences in how we're showing a post excerpt and the whole post. It's usually better to keep writing things separately for a while even if there's some duplication, and then we can decide later if the different sections of code are similar enough that we can really extract a reusable component.
 
 ### Adding the Single Post Route
 
@@ -323,7 +320,7 @@ export const SinglePostPage = ({ match }) => {
 
 ### Preparing Action Payloads
 
-We just saw that the action creators from `createSlice` normally expect one argument, which becomes `action.payload.` This simplifies the most common usage pattern, but sometimes we need to do more work to prepare the contents of an action object. In the case of our `postAdded` action, we need to generate a unique ID for the new post, and we also need to make sure that the payload is an object that looks like `{id, title, content}`.
+We just saw that the action creators from `createSlice` normally expect one argument, which becomes `action.payload`. This simplifies the most common usage pattern, but sometimes we need to do more work to prepare the contents of an action object. In the case of our `postAdded` action, we need to generate a unique ID for the new post, and we also need to make sure that the payload is an object that looks like `{id, title, content}`.
 
 Right now, we're generating the ID and creating the payload object in our React component, and passing the payload object into `postAdded`. But, what if we needed to dispatch the same action from different components, or the logic for preparing the payload is complicated? We'd have to duplicate that logic every time we wanted to dispatch the action, and we're forcing the component to know exactly what the payload for this action should look like.
 

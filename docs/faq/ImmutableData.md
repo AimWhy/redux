@@ -1,7 +1,7 @@
 ---
 id: immutable-data
 title: Immutable Data
-hide_title: true
+sidebar_label: Immutable Data
 ---
 
 # Redux FAQ: Immutable Data
@@ -43,8 +43,9 @@ In particular, immutability in the context of a Web app enables sophisticated ch
 
 ## Why is immutability required by Redux?
 
-- Both Redux and React-Redux employ [shallow equality checking](#shallow-and-deep-equality-checking). In particular: - Redux's `combineReducers` utility [shallowly checks for reference changes](#how-redux-uses-shallow-checking) caused by the reducers that it calls. - React-Redux's `connect` method generates components that [shallowly check reference changes to the root state](#how-react-redux-uses-shallow-checking), and the return values from the `mapStateToProps` function to see if the wrapped components actually need to re-render.
-  Such [shallow checking requires immutability](#redux-shallow-checking-requires-immutability) to function correctly.
+- Both Redux and React-Redux employ [shallow equality checking](#how-do-shallow-and-deep-equality-checking-differ). In particular:
+  - Redux's `combineReducers` utility [shallowly checks for reference changes](#how-does-redux-use-shallow-equality-checking) caused by the reducers that it calls.
+  - React-Redux's `connect` method generates components that [shallowly check reference changes to the root state](#how-does-react-redux-use-shallow-equality-checking), and the return values from the `mapStateToProps` function to see if the wrapped components actually need to re-render. Such [shallow checking requires immutability](#why-will-shallow-equality-checking-not-work-with-mutable-objects) to function correctly.
 - Immutable data management ultimately makes data handling safer.
 - Time-travel debugging requires that reducers be pure functions with no side effects, so that you can correctly jump between different states.
 
@@ -52,7 +53,7 @@ In particular, immutability in the context of a Web app enables sophisticated ch
 
 **Documentation**
 
-- [Recipes: Prerequisite Reducer Concepts](../recipes/structuring-reducers/PrerequisiteConcepts.md)
+- [Using Redux: Prerequisite Reducer Concepts](../usage/structuring-reducers/PrerequisiteConcepts.md)
 
 **Discussions**
 
@@ -274,8 +275,8 @@ The store will still be updated with the new values for the root state, but beca
 
 **Documentation**
 
-- [Recipes: Immutable Update Patterns](../recipes/structuring-reducers/ImmutableUpdatePatterns.md)
-- [Troubleshooting: Never mutate reducer arguments](../recipes/Troubleshooting.md#never-mutate-reducer-arguments)
+- [Using Redux: Immutable Update Patterns](../usage/structuring-reducers/ImmutableUpdatePatterns.md)
+- [Troubleshooting: Never mutate reducer arguments](../usage/Troubleshooting.md#never-mutate-reducer-arguments)
 
 ### Why does a reducer mutating the state prevent React-Redux from re-rendering a wrapped component?
 
@@ -451,7 +452,7 @@ JavaScript was never designed to provide guaranteed immutable operations. Accord
 
 With JavaScript, you can accidentally mutate an object (such as the Redux state tree) quite easily without realizing it. For example, updating deeply nested properties, creating a new _reference_ to an object instead of a new object, or performing a shallow copy rather than a deep copy, can all lead to inadvertent object mutations, and can trip up even the most experienced JavaScript coder.
 
-To avoid these issues, ensure you follow the recommended [immutable update patterns for ES6](../recipes/structuring-reducers/ImmutableUpdatePatterns.md).
+To avoid these issues, ensure you follow the recommended [immutable update patterns](../usage/structuring-reducers/ImmutableUpdatePatterns.md).
 
 ### Verbose Code
 
@@ -469,11 +470,10 @@ In contrast, immutable libraries such as Immer can employ structural sharing, wh
 
 **Documentation**
 
-- [Immutable Update Patterns for ES6](../recipes/structuring-reducers/ImmutableUpdatePatterns.md)
+- [Immutable Update Patterns](../usage/structuring-reducers/ImmutableUpdatePatterns.md)
 
 **Articles**
 
 - [A deep dive into Clojure’s data structures](https://www.slideshare.net/mohitthatte/a-deep-dive-into-clojures-data-structures-euroclojure-2015)
-- [JavaScript and Immutability](https://t4d.io/javascript-and-immutability/)
 - [Immutable Javascript using ES6 and beyond](https://wecodetheweb.com/2016/02/12/immutable-javascript-using-es6-and-beyond/)
 - [Pros and Cons of using immutability with React.js - React Kung Fu](https://reactkungfu.com/2015/08/pros-and-cons-of-using-immutability-with-react-js/)

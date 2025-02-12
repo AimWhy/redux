@@ -1,12 +1,11 @@
 ---
 id: glossary
 title: Glossary
-hide_title: true
 ---
 
 # Glossary
 
-This is a glossary of the core terms in Redux, along with their type signatures. The types are documented using [Flow notation](https://flowtype.org/docs/quick-reference.html).
+This is a glossary of the core terms in Redux, along with their type signatures. The types are documented using [Flow notation](https://flow.org/en/docs/types).
 
 ## State
 
@@ -38,7 +37,7 @@ See also [async action](#async-action) below.
 type Reducer<S, A> = (state: S, action: A) => S
 ```
 
-A _reducer_ (also called a _reducing function_) is a function that accepts an accumulation and a value and returns a new accumulation. They are used to reduce a collection of values down to a single value.
+A _reducer_ is a function that accepts an accumulation and a value and returns a new accumulation. They are used to reduce a collection of values down to a single value.
 
 Reducers are not unique to Redux—they are a fundamental concept in functional programming. Even most non-functional languages, like JavaScript, have a built-in API for reducing. In JavaScript, it's [`Array.prototype.reduce()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce).
 
@@ -94,7 +93,7 @@ A middleware is a higher-order function that composes a [dispatch function](#dis
 
 Middleware is composable using function composition. It is useful for logging actions, performing side effects like routing, or turning an asynchronous API call into a series of synchronous actions.
 
-See [`applyMiddleware(...middlewares)`](./api/applyMiddleware.md) for a detailed look at middleware.
+See [`applyMiddleware(...middlewares)`](../../api/applyMiddleware.md) for a detailed look at middleware.
 
 ## Store
 
@@ -131,7 +130,7 @@ A store creator is a function that creates a Redux store. Like with dispatching 
 type StoreEnhancer = (next: StoreCreator) => StoreCreator
 ```
 
-A store enhancer is a higher-order function that composes a store creator to return a new, enhanced store creator. This is similar to middleware in that it allows you to alter the store interface in a composable way.
+A store enhancer is a higher-order function that composes a store creator to return a new enhanced store creator. This is similar to middleware in that it allows you to alter the store interface in a composable way.
 
 Store enhancers are much the same concept as higher-order components in React, which are also occasionally called “component enhancers”.
 

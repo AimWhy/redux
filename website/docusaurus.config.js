@@ -1,19 +1,45 @@
+const { resolve } = require('path')
+const {
+  linkDocblocks,
+  transpileCodeblocks
+} = require('remark-typescript-tools')
+
 module.exports = {
   title: 'Redux',
-  tagline: 'A Predictable State Container for JS Apps',
+  tagline:
+    'A JS library for predictable and maintainable global state management',
   url: 'https://redux.js.org',
   baseUrl: '/',
   favicon: 'img/favicon/favicon.ico',
   organizationName: 'reduxjs',
   projectName: 'redux',
   themeConfig: {
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 4
+    },
     image: 'img/redux-logo-landscape.png',
-    metadatas: [{ name: 'twitter:card', content: 'summary' }],
+    metadata: [{ name: 'twitter:card', content: 'summary' }],
     prism: {
       theme: require('./src/js/monokaiTheme.js')
     },
     colorMode: {
       disableSwitch: false
+    },
+    announcementBar: {
+      id: 'redux-dev-course',
+      content: `      
+      <a href="https://redux.dev">
+        <img
+          src="/img/course-callout-wide.svg"
+          alt="Redux.dev - a new course by Mark Erikson + ui.dev - Learn more"
+          style="margin-top: 5px;"
+        />
+      </a>
+      `,
+      backgroundColor: '#fafbfc',
+      textColor: '#091E42',
+      isCloseable: false
     },
     navbar: {
       title: 'Redux',
@@ -32,11 +58,23 @@ module.exports = {
           to: 'tutorials/essentials/part-1-overview-concepts',
           position: 'right'
         },
-        { label: 'API', to: 'api/api-reference', position: 'right' },
+        {
+          label: 'Usage Guide',
+          type: 'doc',
+          docId: 'usage/index',
+          position: 'right'
+        },
+        {
+          label: 'API',
+          type: 'doc',
+          docId: 'api/api-reference',
+          position: 'right'
+        },
         { label: 'FAQ', to: 'faq', position: 'right' },
         {
           label: 'Best Practices',
-          to: '/style-guide/style-guide',
+          type: 'doc',
+          docId: 'style-guide/style-guide',
           position: 'right'
         },
         {
@@ -61,6 +99,7 @@ module.exports = {
               label: 'Getting Started',
               to: 'introduction/getting-started'
             },
+            { label: 'Usage Guide', type: 'doc', to: 'usage' },
             {
               label: 'Tutorial',
               to: 'tutorials/essentials/part-1-overview-concepts'
@@ -71,6 +110,7 @@ module.exports = {
             },
             {
               label: 'API Reference',
+              type: 'doc',
               to: 'api/api-reference'
             }
           ]
@@ -104,7 +144,7 @@ module.exports = {
                 <a href="https://www.netlify.com">
                   <img
                     src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg"
-                    alt="Deploys by Netlify"
+                    alt="Deployed by Netlify"
                   />
                 </a>
               `
@@ -120,12 +160,10 @@ module.exports = {
       copyright: `Copyright © 2015–${new Date().getFullYear()} Dan Abramov and the Redux documentation authors.`
     },
     algolia: {
-      apiKey: '518c6e3c629811d8daa1d21dc8bcfa37',
+      appId: 'YUQHC5OCW0',
+      apiKey: 'ef8f3e604a1e7ed3afa4dbaeeecfa5f2',
       indexName: 'redux',
       algoliaOptions: {}
-    },
-    googleAnalytics: {
-      trackingID: 'UA-130598673-1'
     }
   },
   presets: [
@@ -135,12 +173,55 @@ module.exports = {
         docs: {
           path: '../docs',
           routeBasePath: '/',
-          sidebarPath: require.resolve('./sidebars.js')
+          sidebarPath: require.resolve('./sidebars.js'),
+          showLastUpdateTime: true,
+          include: [
+            '{api,faq,introduction,redux-toolkit,style-guide,tutorials,understanding,usage}/**/*.{md,mdx}',
+            'FAQ.md'
+          ], // no other way to exclude node_modules
+          editUrl: 'https://github.com/reduxjs/redux/edit/master/website',
+          remarkPlugins: [
+            [
+              linkDocblocks,
+              {
+                extractorSettings: {
+                  tsconfig: resolve(__dirname, './tsconfig.json'),
+                  basedir: resolve(__dirname, '../src'),
+                  rootFiles: ['index.ts']
+                }
+              }
+            ],
+            [
+              transpileCodeblocks,
+              {
+                compilerSettings: {
+                  tsconfig: resolve(__dirname, './tsconfig.json'),
+                  externalResolutions: {},
+                  transformVirtualFilepath: path =>
+                    path.replace('/docs/', '/website/')
+                }
+              }
+            ]
+          ]
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css')
         }
       }
+    ]
+  ],
+  plugins: [
+    [
+      '@dipakparmar/docusaurus-plugin-umami',
+      /** @type {import('@dipakparmar/docusaurus-plugin-umami').Options} */
+      ({
+        websiteID: '4bb3bf09-7460-453f-857d-874d8a361cb6',
+        analyticsDomain: 'redux-docs-umami.up.railway.app',
+        scriptName: 'script.js',
+        dataAutoTrack: true,
+        dataDoNotTrack: true,
+        dataCache: true
+      })
     ]
   ]
 }

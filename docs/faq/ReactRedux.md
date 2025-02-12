@@ -1,7 +1,7 @@
 ---
 id: react-redux
 title: React Redux
-hide_title: true
+sidebar_label: React Redux
 ---
 
 # Redux FAQ: React Redux
@@ -52,23 +52,22 @@ Overall, React-Redux encourages good React architecture, and implements complex 
 
 Accidentally mutating or modifying your state directly is by far the most common reason why components do not re-render after an action has been dispatched. Redux expects that your reducers will update their state “immutably”, which effectively means always making copies of your data, and applying your changes to the copies. If you return the same object from a reducer, Redux assumes that nothing has been changed, even if you made changes to its contents. Similarly, React Redux tries to improve performance by doing shallow equality reference checks on incoming props in `shouldComponentUpdate`, and if all references are the same, `shouldComponentUpdate` returns `false` to skip actually updating your original component.
 
-It's important to remember that whenever you update a nested value, you must also return new copies of anything above it in your state tree. If you have `state.a.b.c.d`, and you want to make an update to `d`, you would also need to return new copies of `c`, `b`, `a`, and `state`. This [state tree mutation diagram](http://arqex.com/wp-content/uploads/2015/02/trees.png) demonstrates how a change deep in a tree requires changes all the way up.
+It's important to remember that whenever you update a nested value, you must also return new copies of anything above it in your state tree. If you have `state.a.b.c.d`, and you want to make an update to `d`, you would also need to return new copies of `c`, `b`, `a`, and `state`. This [state tree mutation diagram](https://miro.medium.com/v2/resize:fit:1400/1*87dJ5EB3ydD7_AbhKb4UOQ.png) demonstrates how a change deep in a tree requires changes all the way up.
 
 Note that “updating data immutably” does _not_ mean that you must use [Immer](https://github.com/immerjs/immer), although that is certainly an option. You can do immutable updates to plain JS objects and arrays using several different approaches:
 
 - Copying objects using functions like `Object.assign()` or `_.extend()`, and array functions such as `slice()` and `concat()`
-- The array spread operator in ES6, and the similar object spread operator that is proposed for a future version of JavaScript
+- The array spread operator in ES2015, and the similar object spread operator from ES2018
 - Utility libraries that wrap immutable update logic into simpler functions
 
 #### Further information
 
 **Documentation**
 
-- [Troubleshooting](../recipes/Troubleshooting.md)
+- [Troubleshooting](../usage/Troubleshooting.md)
 - [React Redux: Troubleshooting](https://react-redux.js.org/troubleshooting)
-- [Recipes: Using the Object Spread Operator](../recipes/UsingObjectSpreadOperator.md)
-- [Recipes: Structuring Reducers - Prerequisite Concepts](../recipes/structuring-reducers/PrerequisiteConcepts.md)
-- [Recipes: Structuring Reducers - Immutable Update Patterns](../recipes/structuring-reducers/ImmutableUpdatePatterns.md)
+- [Using Redux: Structuring Reducers - Prerequisite Concepts](../usage/structuring-reducers/PrerequisiteConcepts.md)
+- [Using Redux: Structuring Reducers - Immutable Update Patterns](../usage/structuring-reducers/ImmutableUpdatePatterns.md)
 
 **Articles**
 
@@ -109,9 +108,9 @@ For non-connected components, you may want to check what props are being passed 
 
 **Articles**
 
-- [A Deep Dive into React Perf Debugging](https://benchling.engineering/deep-dive-react-perf-debugging/)
+- [A Deep Dive into React Perf Debugging](https://benchling.engineering/a-deep-dive-into-react-perf-debugging-fd2063f5a667)
 - [React.js pure render performance anti-pattern](https://medium.com/@esamatti/react-js-pure-render-performance-anti-pattern-fb88c101332f)
-- [Improving React and Redux Performance with Reselect](https://blog.rangle.io/react-and-redux-performance-with-reselect/)
+- [Improving React and Redux Performance with Reselect](https://rangle.io/blog/react-and-redux-performance-with-reselect/)
 - [Encapsulating the Redux State Tree](https://randycoulman.com/blog/2016/09/13/encapsulating-the-redux-state-tree/)
 - [React/Redux Links: React/Redux Performance](https://github.com/markerikson/react-redux-links/blob/master/react-performance.md)
 
@@ -131,11 +130,11 @@ While React Redux does work to minimize the number of times that your `mapStateT
 
 **Documentation**
 
-- [Recipes: Computed Derived Data](../recipes/ComputingDerivedData.md)
+- [Using Redux: Deriving Data with Selectors](../usage/deriving-data-selectors.md)
 
 **Articles**
 
-- [Improving React and Redux Performance with Reselect](https://blog.rangle.io/react-and-redux-performance-with-reselect/)
+- [Improving React and Redux Performance with Reselect](https://rangle.io/blog/react-and-redux-performance-with-reselect/)
 
 **Discussions**
 
@@ -203,7 +202,7 @@ Both Redux and React's Context API deal with "prop drilling". That said, they bo
 
 **Differences**
 
-With Redux, you get the the power of [Redux Dev Tools Extension](https://github.com/zalmoxisus/redux-devtools-extension). It automatically logs every action your app performs, and it allows time traveling – you can click on any past action and jump to that point in time. Redux also supports the concept of middleware, where you may bind customized function calls on every action dispatch. Such examples include an automatic event logger, interception of certain actions, etc.
+With Redux, you get the power of [Redux Dev Tools Extension](https://github.com/reduxjs/redux-devtools/tree/main/extension). It automatically logs every action your app performs, and it allows time traveling – you can click on any past action and jump to that point in time. Redux also supports the concept of middleware, where you may bind customized function calls on every action dispatch. Such examples include an automatic event logger, interception of certain actions, etc.
 
 With React's Context API, you deal with a pair of components speaking only to each other. This gives you nice isolation between irrelevant data. You also have the flexibility of how you may use the data with your components, i.e., you can provide the state of a parent component, and you may pass context data as props to wrapped components.
 

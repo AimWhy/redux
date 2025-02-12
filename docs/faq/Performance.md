@@ -1,7 +1,7 @@
 ---
 id: performance
 title: Performance
-hide_title: true
+sidebar_label: Performance
 ---
 
 # Redux FAQ: Performance
@@ -42,7 +42,7 @@ As for architecture, anecdotal evidence is that Redux works well for varying pro
 
 **Documentation**
 
-- [Recipes: Structuring Reducers - Normalizing State Shape](../recipes/structuring-reducers/NormalizingStateShape.md)
+- [Using Redux: Structuring Reducers - Normalizing State Shape](../usage/structuring-reducers/NormalizingStateShape.md)
 
 **Articles**
 
@@ -103,8 +103,8 @@ However, you _do_ need to create a copied and updated object for each level of n
 
 **Documentation**
 
-- [Recipes: Structuring Reducers - Prerequisite Concepts](../recipes/structuring-reducers/PrerequisiteConcepts.md)
-- [Recipes: Structuring Reducers - Immutable Update Patterns](../recipes/structuring-reducers/ImmutableUpdatePatterns.md)
+- [Using Redux: Structuring Reducers - Prerequisite Concepts](../usage/structuring-reducers/PrerequisiteConcepts.md)
+- [Using Redux: Structuring Reducers - Immutable Update Patterns](../usage/structuring-reducers/ImmutableUpdatePatterns.md)
 
 **Discussions**
 
@@ -112,7 +112,6 @@ However, you _do_ need to create a copied and updated object for each level of n
 - [#758: Why can't state be mutated?](https://github.com/reduxjs/redux/issues/758)
 - [#994: How to cut the boilerplate when updating nested entities?](https://github.com/reduxjs/redux/issues/994)
 - [Twitter: common misconception - deep cloning](https://twitter.com/dan_abramov/status/688087202312491008)
-- [Cloning Objects in JavaScript](https://www.zsoltnagy.eu/cloning-objects-in-javascript/)
 
 ### How can I reduce the number of store update events?
 
@@ -183,7 +182,7 @@ First, only cache as much data as the user needs. If your application displays a
 
 Second, cache an abbreviated form of a record when possible. Sometimes a record includes data that is not relevant to the user. If the application does not depend on this data, it can be omitted from the cache.
 
-Third, only cache a single copy of a record. This is especially important when records contain copies of other records. Cache a unique copy for each record and replace each nested copy with a reference. This is called normalization. Normalization is the preferred approach to storing relational data for [several reasons](../recipes/structuring-reducers/NormalizingStateShape.md#designing-a-normalized-state), including efficient memory consumption.
+Third, only cache a single copy of a record. This is especially important when records contain copies of other records. Cache a unique copy for each record and replace each nested copy with a reference. This is called normalization. Normalization is the preferred approach to storing relational data for [several reasons](../usage/structuring-reducers/NormalizingStateShape.md#designing-a-normalized-state), including efficient memory consumption.
 
 #### Further information
 

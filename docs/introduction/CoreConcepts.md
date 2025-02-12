@@ -2,7 +2,6 @@
 id: core-concepts
 title: Core Concepts
 description: "Introduction > Core Concepts: A quick overview of Redux's key idea, reducer functions"
-hide_title: true
 ---
 
 # Core Concepts
@@ -33,7 +32,7 @@ To change something in the state, you need to dispatch an action. An action is a
 ```
 
 Enforcing that every change is described as an action lets us have a clear understanding of what’s going on in the app. If something changed, we know why it changed. Actions are like breadcrumbs of what has happened.
-Finally, to tie state and actions together, we write a function called a reducer. Again, nothing magical about it—it’s just a function that takes state and action as arguments, and returns the next state of the app.
+Finally, to tie state and actions together, we write a function called a reducer. Again, nothing magical about it — it’s just a function that takes state and action as arguments, and returns the next state of the app.
 It would be hard to write such a function for a big app, so we write smaller functions managing parts of the state:
 
 ```js

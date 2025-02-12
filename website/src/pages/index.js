@@ -137,8 +137,8 @@ function Home() {
   const { siteConfig = {} } = context
   return (
     <Layout
-      title={`${siteConfig.title} - A predictable state container for JavaScript apps.`}
-      description="A predictable state container for JavaScript apps."
+      title={`${siteConfig.title} - A JS library for predictable and maintainable global state management`}
+      description="A JS library for predictable and maintainable global state management"
     >
       <header className={classnames('hero hero--primary', styles.heroBanner)}>
         <div className="container">
@@ -180,6 +180,11 @@ function Home() {
             </div>
           </section>
         )}
+        <section className="course-callout home-mid">
+          <a href="https://redux.dev">
+            <img src="/img/course-callout-mid.svg" alt="Redux.dev - a new course by Mark Erikson + ui.dev - Learn more" />
+          </a>
+        </section>
         {otherLibraries && otherLibraries.length && (
           <section className={styles.features}>
             <div className="container">

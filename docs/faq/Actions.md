@@ -1,7 +1,7 @@
 ---
 id: actions
 title: Actions
-hide_title: true
+sidebar_label: Actions
 ---
 
 # Redux FAQ: Actions
@@ -23,11 +23,11 @@ hide_title: true
 
 ## Actions
 
-### Why should `type` be a string, or at least serializable? Why should my action types be constants?
+### Why should `type` be a string? Why should my action types be constants?
 
 As with state, serializable actions enable several of Redux's defining features, such as time travel debugging, and recording and replaying actions. Using something like a `Symbol` for the `type` value or using `instanceof` checks for actions themselves would break that. Strings are serializable and easily self-descriptive, and so are a better choice. Note that it _is_ okay to use Symbols, Promises, or other non-serializable values in an action if the action is intended for use by middleware. Actions only need to be serializable by the time they actually reach the store and are passed to the reducers.
 
-We can't reliably enforce serializable actions for performance reasons, so Redux only checks that every action is a plain object, and that the `type` is defined. The rest is up to you, but you might find that keeping everything serializable helps debug and reproduce issues.
+We can't reliably enforce serializable actions for performance reasons, so Redux only checks that every action is a plain object, and that the `type` is a string. The rest is up to you, but you might find that keeping everything serializable helps debug and reproduce issues.
 
 Encapsulating and centralizing commonly used pieces of code is a key concept in programming. While it is certainly possible to manually create action objects everywhere, and write each `type` value by hand, defining reusable constants makes maintaining code easier. If you put constants in a separate file, you can [check your `import` statements against typos](https://www.npmjs.com/package/eslint-plugin-import) so you can't accidentally use the wrong string.
 
@@ -35,7 +35,7 @@ Encapsulating and centralizing commonly used pieces of code is a key concept in 
 
 **Documentation**
 
-- [Reducing Boilerplate](../recipes/ReducingBoilerplate.md#actions)
+- [Using Redux: Reducing Boilerplate](../usage/ReducingBoilerplate.md#actions)
 
 **Discussion**
 
@@ -55,7 +55,7 @@ No. We suggest you write independent small reducer functions that are each respo
 **Documentation**
 
 - [Fundamentals: State, Actions, Reducers](../tutorials/fundamentals/part-3-state-actions-reducers.md)
-- [Recipes: Structuring Reducers](../recipes/structuring-reducers/StructuringReducers.md)
+- [Using Redux: Structuring Reducers](../usage/structuring-reducers/StructuringReducers.md)
 
 **Discussions**
 
@@ -74,7 +74,7 @@ Redux is inspired by functional programming, and out of the box, has no place fo
 
 In general, Redux suggests that code with side effects should be part of the action creation process. While that logic _can_ be performed inside of a UI component, it generally makes sense to extract that logic into a reusable function so that the same logic can be called from multiple places—in other words, an action creator function.
 
-The simplest and most common way to do this is to add the [Redux Thunk](https://github.com/gaearon/redux-thunk) middleware that lets you write action creators with more complex and asynchronous logic. Another widely-used method is [Redux Saga](https://github.com/yelouafi/redux-saga) which lets you write more synchronous-looking code using generators, and can act like “background threads” or “daemons” in a Redux app. Yet another approach is [Redux Loop](https://github.com/raisemarketplace/redux-loop), which inverts the process by allowing your reducers to declare side effects in response to state changes and have them executed separately. Beyond that, there are _many_ other community-developed libraries and ideas, each with their own take on how side effects should be managed.
+The simplest and most common way to do this is to add the [Redux Thunk](https://github.com/reduxjs/redux-thunk) middleware that lets you write action creators with more complex and asynchronous logic. Another widely-used method is [Redux Saga](https://github.com/yelouafi/redux-saga) which lets you write more synchronous-looking code using generators, and can act like “background threads” or “daemons” in a Redux app. Yet another approach is [Redux Loop](https://github.com/raisemarketplace/redux-loop), which inverts the process by allowing your reducers to declare side effects in response to state changes and have them executed separately. Beyond that, there are _many_ other community-developed libraries and ideas, each with their own take on how side effects should be managed.
 
 #### Further information
 
@@ -114,7 +114,7 @@ There are [many async/side effect middlewares available](https://github.com/mark
 As a general rule of thumb:
 
 - Thunks are best for complex synchronous logic (especially code that needs access to the entire Redux store state), and simple async logic (like basic AJAX calls). With the use of `async/await`, it can be reasonable to use thunks for some more complex promise-based logic as well.
-- Sagas are best for complex async logic and decoupled "background thread"-type behavior, especially if you need to listen to dispatched actions (which is something that can't be done with thunks). They require familiarity with ES6 generator functions and `redux-saga`'s "effects" operators.
+- Sagas are best for complex async logic and decoupled "background thread"-type behavior, especially if you need to listen to dispatched actions (which is something that can't be done with thunks). They require familiarity with generator functions and `redux-saga`'s "effects" operators.
 - Observables solve the same problems as sagas, but rely on RxJS to implement async behavior. They require familiarity with the RxJS API.
 
 We recommend that most Redux users should start with thunks, and then add an additional side effect library like sagas or observables later if their app really requires handling for more complex async logic.
@@ -124,14 +124,13 @@ Since sagas and observables have the same use case, an application would normall
 **Articles**
 
 - [Decembersoft: What is the right way to do asynchronous operations in Redux?](https://decembersoft.com/posts/what-is-the-right-way-to-do-asynchronous-operations-in-redux/)
-- [Decembersoft: Redux-Thunk vs Redux-Saga](https://decembersoft.com/posts/redux-thunk-vs-redux-saga/)
 - [Redux-Thunk vs Redux-Saga: an overview](https://medium.com/@shoshanarosenfield/redux-thunk-vs-redux-saga-93fe82878b2d)
 - [Redux-Saga V.S. Redux-Observable](https://hackmd.io/s/H1xLHUQ8e#side-by-side-comparison)
 
 **Discussions**
 
 - [Reddit: discussion of using thunks and sagas together, and pros and cons of sagas](https://www.reddit.com/r/reactjs/comments/8vglo0/react_developer_map_by_adamgolab/e1nr597/)
-- [Stack Overflow: Pros/cons of using redux-saga with ES6 generators vs redux-thunk with ES2017 async/await](https://stackoverflow.com/questions/34930735/pros-cons-of-using-redux-saga-with-es6-generators-vs-redux-thunk-with-es2017-asy)
+- [Stack Overflow: Pros/cons of using redux-saga with ES2015 generators vs redux-thunk with ES2017 async/await](https://stackoverflow.com/questions/34930735/pros-cons-of-using-redux-saga-with-es6-generators-vs-redux-thunk-with-es2017-asy)
 - [Stack Overflow: Why use Redux-Observable over Redux-Saga?](https://stackoverflow.com/questions/40021344/why-use-redux-observable-over-redux-saga/40027778#40027778)
 
 ### Should I dispatch multiple actions in a row from one action creator?

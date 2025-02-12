@@ -4,7 +4,6 @@ import { useLocation } from '@docusaurus/router'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import styles from './styles.module.css'
 import errorCodes from '../../../errors.json'
-import 'url-search-params-polyfill'
 
 function Errors() {
   const location = useLocation()
@@ -15,8 +14,8 @@ function Errors() {
 
   return (
     <Layout
-      title={`${siteConfig.title} - A predictable state container for JavaScript apps.`}
-      description="A predictable state container for JavaScript apps."
+      title={`${siteConfig.title} - A JS library for predictable and maintainable global state management`}
+      description="A JS library for predictable and maintainable global state management"
     >
       <main className={styles.mainFull}>
         <h1>Production Error Codes</h1>

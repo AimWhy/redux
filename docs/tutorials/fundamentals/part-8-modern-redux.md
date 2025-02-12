@@ -2,13 +2,10 @@
 id: part-8-modern-redux
 title: 'Redux Fundamentals, Part 8: Modern Redux with Redux Toolkit'
 sidebar_label: 'Modern Redux with Redux Toolkit'
-hide_title: true
 description: 'The official Fundamentals tutorial for Redux: learn the modern way to write Redux logic'
 ---
 
 import { DetailedExplanation } from '../../components/DetailedExplanation'
-
-# Redux Fundamentals, Part 8: Modern Redux with Redux Toolkit
 
 :::tip What You'll Learn
 
@@ -215,7 +212,10 @@ Let's look at a small standalone example first.
 ```js title="createSlice  example"
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = []
+const initialState = {
+  entities: [],
+  status: null
+}
 
 const todosSlice = createSlice({
   name: 'todos',
@@ -223,10 +223,10 @@ const todosSlice = createSlice({
   reducers: {
     todoAdded(state, action) {
       // ✅ This "mutating" code is okay inside of createSlice!
-      state.push(action.payload)
+      state.entities.push(action.payload)
     },
     todoToggled(state, action) {
-      const todo = state.find(todo => todo.id === action.payload)
+      const todo = state.entities.find(todo => todo.id === action.payload)
       todo.completed = !todo.completed
     },
     todosLoading(state, action) {
@@ -247,7 +247,7 @@ There's several things to see in this example:
 
 - We write case reducer functions inside the `reducers` object, and give them readable names
 - **`createSlice` will automatically generate action creators** that correspond to each case reducer function we provide
-- createSlice automatically returns the existing state in the default case
+- `createSlice` automatically returns the existing state in the default case
 - **`createSlice` allows us to safely "mutate" our state!**
 - But, we can also make immutable copies like before if we want to
 
@@ -354,9 +354,7 @@ Let's start converting our todos slice file to use `createSlice` instead. We'll 
 
 ```js title="src/features/todos/todosSlice.js"
 // highlight-next-line
-import { createSlice, createSelector } from '@reduxjs/toolkit'
-import { client } from '../../api/client'
-import { StatusFilters } from '../filters/filtersSlice'
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   status: 'idle',
@@ -423,12 +421,8 @@ const todosSlice = createSlice({
   }
 })
 
-export const {
-  todoAdded,
-  todoToggled,
-  todoColorSelected,
-  todoDeleted
-} = todosSlice.actions
+export const { todoAdded, todoToggled, todoColorSelected, todoDeleted } =
+  todosSlice.actions
 
 export default todosSlice.reducer
 ```
@@ -447,7 +441,7 @@ Here's how our code looks with all the slices converted:
 
 <iframe
   class="codesandbox"
-  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-9-createSlice/?fontsize=14&hidenavigation=1&theme=dark&module=%2Fsrc%2Ffeatures%2Ftodos%2FtodosSlice.js&runonclick=1"
+  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-9-createSlice/?codemirror=1&fontsize=14&hidenavigation=1&theme=dark&module=%2Fsrc%2Ffeatures%2Ftodos%2FtodosSlice.js&runonclick=1"
   title="redux-fundamentals-example-app"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
@@ -457,7 +451,15 @@ Here's how our code looks with all the slices converted:
 
 We've seen how we can [write thunks that dispatch "loading", "request succeeded", and "request failed" actions](./part-7-standard-patterns.md#loading-state-enum-values). We had to write action creators, action types, _and_ reducers to handle those cases.
 
-Because this pattern is so common, **Redux Toolkit has a `createAsyncThunk` API that will generate these thunks for us**. It also generates the action types and action creators for those different request status actions, and dispatches those actions automatically based on the resulting `Promise`.
+Because this pattern is so common, **Redux Toolkit has a `createAsyncThunk` API that will generate these thunks for us**. It also generates the action types and action creators for those different request status actions, and dispatches those actions automatically based on the resulting Promise.
+
+:::tip
+
+Redux Toolkit has a new [**RTK Query data fetching API**](https://redux-toolkit.js.org/rtk-query/overview). RTK Query is a purpose built data fetching and caching solution for Redux apps, and **can eliminate the need to write _any_ thunks or reducers to manage data fetching**. We encourage you to try it out and see if it can help simplify the data fetching code in your own apps!
+
+We'll be updating the Redux tutorials soon to include sections on using RTK Query. Until then, see [the RTK Query section in the Redux Toolkit docs](https://redux-toolkit.js.org/rtk-query/overview).
+
+:::
 
 ### Using `createAsyncThunk`
 
@@ -466,7 +468,7 @@ Let's replace our `fetchTodos` thunk by generating a thunk with `createAsyncThun
 `createAsyncThunk` accepts two arguments:
 
 - A string that will be used as the prefix for the generated action types
-- A "payload creator" callback function that should return a `Promise`. This is often written using the `async/await` syntax, since `async` functions automatically return a promise.
+- A "payload creator" callback function that should return a Promise. This is often written using the `async/await` syntax, since `async` functions automatically return a promise.
 
 ```js title="src/features/todos/todosSlice.js"
 // highlight-next-line
@@ -575,7 +577,7 @@ While we won't cover `createAsyncThunk` in more detail here, a few other quick n
 
 - You can only pass one argument to the thunk when you dispatch it. If you need to pass multiple values, pass them in a single object
 - The payload creator will receive an object as its second argument, which contains `{getState, dispatch}`, and some other useful values
-- The thunk dispatches the `pending` action before running your payload creator, then dispatches either `fulfilled` or `rejected` based on whether the `Promise` you return succeeds or fails
+- The thunk dispatches the `pending` action before running your payload creator, then dispatches either `fulfilled` or `rejected` based on whether the Promise you return succeeds or fails
 
 ## Normalizing State
 
@@ -753,10 +755,8 @@ export const {
 export default todosSlice.reducer
 
 // highlight-start
-export const {
-  selectAll: selectTodos,
-  selectById: selectTodoById
-} = todosAdapter.getSelectors(state => state.todos)
+export const { selectAll: selectTodos, selectById: selectTodoById } =
+  todosAdapter.getSelectors(state => state.todos)
 // highlight-end
 
 export const selectTodoIds = createSelector(
@@ -799,7 +799,7 @@ export const selectFilteredTodoIds = createSelector(
 )
 ```
 
-We call `todosAdapter.getSelectors`, and pass in a `state => state.todos` selector that returns this slice of state. From there, the adapter generates a `selectAll` selector that takes the _entire_ Redux state tree, as usual, and loops over `state.todos.entities` and `state.todos.ids` to give us the complete array of todo objects. Since `selectAll` doesn't tell us _what_ we're selecting, we can use ES6 destructuring syntax to rename the function to `selectTodos`. Similarly, we can rename `selectById` to `selectTodoById`.
+We call `todosAdapter.getSelectors`, and pass in a `state => state.todos` selector that returns this slice of state. From there, the adapter generates a `selectAll` selector that takes the _entire_ Redux state tree, as usual, and loops over `state.todos.entities` and `state.todos.ids` to give us the complete array of todo objects. Since `selectAll` doesn't tell us _what_ we're selecting, we can use destructuring syntax to rename the function to `selectTodos`. Similarly, we can rename `selectById` to `selectTodoById`.
 
 Notice that our other selectors still use `selectTodos` as an input. That's because it's still returning an array of todo objects this whole time, no matter whether we were keeping the array as the entire `state.todos`, keeping it as a nested array, or storing it as a normalized object and converting to an array. Even as we've made all these changes to how we stored our data, the use of selectors allowed us to keep the rest of our code the same, and the use of memoized selectors has helped the UI perform better by avoiding unnecessary rerenders.
 
@@ -830,7 +830,7 @@ Let's take one final look at the completed todo application, including all the c
 
 <iframe
   class="codesandbox"
-  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-10-finalCode/?fontsize=14&hidenavigation=1&theme=dark&module=%2Fsrc%2Ffeatures%2Ftodos%2FtodosSlice.js&runonclick=1"
+  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-10-finalCode/?codemirror=1&fontsize=14&hidenavigation=1&theme=dark&module=%2Fsrc%2Ffeatures%2Ftodos%2FtodosSlice.js&runonclick=1"
   title="redux-fundamentals-example-app"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
@@ -869,7 +869,7 @@ However, our [**"Redux Essentials" tutorial**](../essentials/part-1-overview-con
 
 At the same time, the concepts we've covered in this tutorial should be enough to get you started building your own applications using React and Redux. Now's a great time to try working on a project yourself to solidify these concepts and see how they work in practice. If you're not sure what kind of a project to build, see [this list of app project ideas](https://github.com/florinpop17/app-ideas) for some inspiration.
 
-The [Recipes](../../recipes/README.md) section has information on a number of important concepts, like [how to structure your reducers](../../recipes/structuring-reducers/StructuringReducers.md), and [**our Style Guide page**](../../style-guide/style-guide) has important information on our recommended patterns and best practices.
+The [Using Redux](../../usage/index.md) section has information on a number of important concepts, like [how to structure your reducers](../../usage/structuring-reducers/StructuringReducers.md), and [**our Style Guide page**](../../style-guide/style-guide.md) has important information on our recommended patterns and best practices.
 
 If you'd like to know more about _why_ Redux exists, what problems it tries to solve, and how it's meant to be used, see Redux maintainer Mark Erikson's posts on [The Tao of Redux, Part 1: Implementation and Intent](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-1/) and [The Tao of Redux, Part 2: Practice and Philosophy](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/).
 

@@ -1,7 +1,7 @@
 ---
 id: miscellaneous
 title: Miscellaneous
-hide_title: true
+sidebar_label: Miscellaneous
 ---
 
 # Redux FAQ: Miscellaneous

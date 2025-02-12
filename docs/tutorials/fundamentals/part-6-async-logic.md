@@ -2,11 +2,11 @@
 id: part-6-async-logic
 title: 'Redux Fundamentals, Part 6: Async Logic and Data Fetching'
 sidebar_label: 'Async Logic and Data Fetching'
-hide_title: true
 description: 'The official Redux Fundamentals tutorial: learn how to use async logic with Redux'
 ---
 
-# Redux Fundamentals, Part 6: Async Logic and Data Fetching
+<!-- prettier-ignore -->
+import FundamentalsWarning from "../../components/_FundamentalsWarning.mdx";
 
 :::tip What You'll Learn
 
@@ -18,7 +18,7 @@ description: 'The official Redux Fundamentals tutorial: learn how to use async l
 
 :::info Prerequisites
 
-- Familiarity with using AJAX requests to fetch and update data from a server
+- Familiarity with using HTTP requests to fetch and update data from a server
 - Understanding asynchronous logic in JS, including Promises
 
 :::
@@ -30,6 +30,16 @@ In [Part 5: UI and React](./part-5-ui-and-react.md), we saw how to use the React
 So far, all the data we've worked with has been directly inside of our React+Redux client application. However, most real applications need to work with data from a server, by making HTTP API calls to fetch and save items.
 
 In this section, we'll update our todo app to fetch the todos from an API, and add new todos by saving them to the API.
+
+<FundamentalsWarning />
+
+:::tip
+
+Redux Toolkit includes the [**RTK Query data fetching and caching API**](https://redux-toolkit.js.org/rtk-query/overview). RTK Query is a purpose built data fetching and caching solution for Redux apps, and **can eliminate the need to write _any_ thunks or reducers to manage data fetching**. We specifically teach RTK Query as the default approach for data fetching, and RTK Query is built on the same patterns shown in this page.
+
+Learn how to use RTK Query for data fetching in [Redux Essentials, Part 7: RTK Query Basics](../essentials/part-7-rtk-query-basics.md).
+
+:::
 
 ### Example REST API and Client
 
@@ -48,7 +58,7 @@ Earlier, we said that Redux reducers must never contain "side effects". **A "sid
 - Logging a value to the console
 - Saving a file
 - Setting an async timer
-- Making an AJAX HTTP request
+- Making an HTTP request
 - Modifying some state that exists outside of a function, or mutating arguments to a function
 - Generating random numbers or unique random IDs (such as `Math.random()` or `Date.now()`)
 
@@ -157,7 +167,7 @@ Just like with a normal action, we first need to handle a user event in the appl
 
 Once that dispatched value reaches a middleware, it can make an async call, and then dispatch a real action object when the async call completes.
 
-Earlier, we saw [a diagram that represents the normal synchronous Redux data flow](./part-2-concepts-data-flow.md#redux-application-data-flow). When we add async logic to a Redux app, we add an extra step where middleware can run logic like AJAX requests, then dispatch actions. That makes the async data flow look like this:
+Earlier, we saw [a diagram that represents the normal synchronous Redux data flow](./part-2-concepts-data-flow.md#redux-application-data-flow). When we add async logic to a Redux app, we add an extra step where middleware can run logic like HTTP requests, then dispatch actions. That makes the async data flow look like this:
 
 ![Redux async data flow diagram](/img/tutorials/essentials/ReduxAsyncDataFlowDiagram.gif)
 
@@ -169,7 +179,11 @@ As it turns out, Redux already has an official version of that "async function m
 
 :::info
 
-The word "thunk" is a programming term that means ["a piece of code that does some delayed work"](https://en.wikipedia.org/wiki/Thunk). For more details, see these posts:
+The word "thunk" is a programming term that means ["a piece of code that does some delayed work"](https://en.wikipedia.org/wiki/Thunk). For more details on how to use thunks, see the thunk usage guide page:
+
+- [Using Redux: Writing Logic with Thunks](../../usage/writing-logic-thunks.mdx)
+
+as well as these posts:
 
 - [What the heck is a thunk?](https://daveceddia.com/what-is-a-thunk/)
 - [Thunks in Redux: the basics](https://medium.com/fullstack-academy/thunks-in-redux-the-basics-85e538a3fe60)
@@ -205,7 +219,7 @@ export default store
 
 Right now our todo entries can only exist in the client's browser. We need a way to load a list of todos from the server when the app starts up.
 
-We'll start by writing a thunk function that makes an AJAX call to our `/fakeApi/todos` endpoint to request an array of todo objects, and then dispatch an action containing that array as the payload. Since this is related to the todos feature in general, we'll write the thunk function in the `todosSlice.js` file:
+We'll start by writing a thunk function that makes an HTTP call to our `/fakeApi/todos` endpoint to request an array of todo objects, and then dispatch an action containing that array as the payload. Since this is related to the todos feature in general, we'll write the thunk function in the `todosSlice.js` file:
 
 ```js title="src/features/todos/todosSlice.js"
 import { client } from '../../api/client'
@@ -235,7 +249,7 @@ For now, let's try putting this directly in `index.js`:
 
 ```js title="src/index.js"
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import './index.css'
 import App from './App'
@@ -249,13 +263,14 @@ import { fetchTodos } from './features/todos/todosSlice'
 store.dispatch(fetchTodos)
 // highlight-end
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'))
+
+root.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 )
 ```
 
@@ -431,7 +446,7 @@ Thunk functions can be used for both asynchronous _and_ synchronous logic. Thunk
 
 ## What You've Learned
 
-We've now succesfully updated our todo app so that we can fetch a list of todo items and save new todo items, using "thunk" functions to make the AJAX calls to our fake server API.
+We've now successfully updated our todo app so that we can fetch a list of todo items and save new todo items, using "thunk" functions to make the HTTP requests to our fake server API.
 
 In the process, we saw how Redux middleware are used to let us make async calls and interact with the store by dispatching actions with after the async calls have completed.
 
@@ -439,7 +454,7 @@ Here's what the current app looks like:
 
 <iframe
   class="codesandbox"
-  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-6-asyncThunks/?fontsize=14&hidenavigation=1&theme=dark&runonclick=1"
+  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-6-asyncThunks/?codemirror=1&fontsize=14&hidenavigation=1&theme=dark&runonclick=1"
   title="redux-fundamentals-example-app"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
@@ -448,7 +463,7 @@ Here's what the current app looks like:
 :::tip Summary
 
 - **Redux middleware were designed to enable writing logic that has side effects**
-  - "Side effects" are code that changes state/behavior outside a function, like AJAX calls, modifying function arguments, or generating random values
+  - "Side effects" are code that changes state/behavior outside a function, like HTTP requests, modifying function arguments, or generating random values
 - **Middleware add an extra step to the standard Redux data flow**
   - Middleware can intercept other values passed to `dispatch`
   - Middleware have access to `dispatch` and `getState`, so they can dispatch more actions as part of async logic

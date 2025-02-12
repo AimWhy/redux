@@ -173,7 +173,7 @@ case "todos/toggleTodo":
 However, doing the logic in the reducer is preferable for several reasons:
 
 - Reducers are always easy to test, because they are pure functions - you just call `const result = reducer(testState, action)`, and assert that the result is what you expected. So, the more logic you can put in a reducer, the more logic you have that is easily testable.
-- Redux state updates must always follow [the rules of immutable updates](../recipes/structuring-reducers/ImmutableUpdatePatterns.md). Most Redux users realize they have to follow the rules inside a reducer, but it's not obvious that you _also_ have to do this if the new state is calculated _outside_ the reducer. This can easily lead to mistakes like accidental mutations, or even reading a value from the Redux store and passing it right back inside an action. Doing all of the state calculations in a reducer avoids those mistakes.
+- Redux state updates must always follow [the rules of immutable updates](../usage/structuring-reducers/ImmutableUpdatePatterns.md). Most Redux users realize they have to follow the rules inside a reducer, but it's not obvious that you _also_ have to do this if the new state is calculated _outside_ the reducer. This can easily lead to mistakes like accidental mutations, or even reading a value from the Redux store and passing it right back inside an action. Doing all of the state calculations in a reducer avoids those mistakes.
 - If you are using Redux Toolkit or Immer, it is much easier to write immutable update logic in reducers, and Immer will freeze the state and catch accidental mutations.
 - Time-travel debugging works by letting you "undo" a dispatched action, then either do something different or "redo" the action. In addition, hot-reloading of reducers normally involves re-running the new reducer with the existing actions. If you have a correct action but a buggy reducer, you can edit the reducer to fix the bug, hot-reload it, and you should get the correct state right away. If the action itself was wrong, you'd have to re-run the steps that led to that action being dispatched. So, it's easier to debug if more logic is in the reducer.
 - Finally, putting logic in reducers means you know where to look for the update logic, instead of having it scattered in random other parts of the application code.
@@ -232,12 +232,12 @@ Use of static typing does make this kind of code safer and somewhat more accepta
 
 ### Name State Slices Based On the Stored Data
 
-As mentioned in [Reducers Should Own the State Shape ](#reducers-should-own-the-state-shape), the standard approach for splitting reducer logic is based on "slices" of state. Correspondingly, `combineReducers` is the standard function for joining those slice reducers into a larger reducer function.
+As mentioned in [Reducers Should Own the State Shape](#reducers-should-own-the-state-shape), the standard approach for splitting reducer logic is based on "slices" of state. Correspondingly, `combineReducers` is the standard function for joining those slice reducers into a larger reducer function.
 
 The key names in the object passed to `combineReducers` will define the names of the keys in the resulting state object. Be sure to name these keys after the data that is kept inside, and avoid use of the word "reducer" in the key names. Your object should look like `{users: {}, posts: {}}`, rather than `{usersReducer: {}, postsReducer: {}}`.
 
 <DetailedExplanation>
-ES6 object literal shorthand makes it easy to define a key name and a value in an object at the same time:
+Object literal shorthand makes it easy to define a key name and a value in an object at the same time:
 
 ```js
 const data = 42
@@ -362,7 +362,19 @@ Now, since you're defining behavior per state instead of per action, you also pr
 
 Many applications need to cache complex data in the store. That data is often received in a nested form from an API, or has relations between different entities in the data (such as a blog that contains Users, Posts, and Comments).
 
-**Prefer storing that data in [a "normalized" form](../recipes/structuring-reducers/NormalizingStateShape.md) in the store**. This makes it easier to look up items based on their ID and update a single item in the store, and ultimately leads to better performance patterns.
+**Prefer storing that data in [a "normalized" form](../usage/structuring-reducers/NormalizingStateShape.md) in the store**. This makes it easier to look up items based on their ID and update a single item in the store, and ultimately leads to better performance patterns.
+
+### Keep State Minimal and Derive Additional Values
+
+Whenever possible, **keep the actual data in the Redux store as minimal as possible, and _derive_ additional values from that state as needed**. This includes things like calculating filtered lists or summing up values. As an example, a todo app would keep an original list of todo objects in state, but derive a filtered list of todos outside the state whenever the state is updated. Similarly, a check for whether all todos have been completed, or number of todos remaining, can be calculated outside the store as well.
+
+This has several benefits:
+
+- The actual state is easier to read
+- Less logic is needed to calculate those additional values and keep them in sync with the rest of the data
+- The original state is still there as a reference and isn't being replaced
+
+Deriving data is often done in "selector" functions, which can encapsulate the logic for doing the derived data calculations. In order to improve performance, these selectors can be _memoized_ to cache previous results, using libraries like `reselect` and `proxy-memoize`.
 
 ### Model Actions as Events, Not Setters
 
@@ -439,7 +451,7 @@ If multiple dispatches are truly necessary, consider batching the updates in som
 
 The ["Three Principles of Redux"](../understanding/thinking-in-redux/ThreePrinciples.md) says that "the state of your whole application is stored in a single tree". This phrasing has been over-interpreted. It does not mean that literally _every_ value in the entire app _must_ be kept in the Redux store. Instead, **there should be a single place to find all values that _you_ consider to be global and app-wide**. Values that are "local" should generally be kept in the nearest UI component instead.
 
-Because of this, it is up to you as a developer to decide what state should actually live in the Redux store, and what should stay in component state. **[Use these rules of thumb to help evaluate each piece of state and decide where it should live](../faq/OrganizingState.md#do-i-have-to-put-all-my-state-into-redux-should-i-ever-use-reacts-setstate)**.
+Because of this, it is up to you as a developer to decide what state should actually live in the Redux store, and what should stay in component state. **[Use these rules of thumb to help evaluate each piece of state and decide where it should live](../faq/OrganizingState.md#do-i-have-to-put-all-my-state-into-redux-should-i-ever-use-reacts-usestate-or-usereducer)**.
 
 ### Use the React-Redux Hooks API
 
@@ -492,13 +504,13 @@ However, try to find an appropriate balance of granularity. If a single componen
 
 ### Use the Redux DevTools Extension for Debugging
 
-**Configure your Redux store to enable [debugging with the Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)**. It allows you to view:
+**Configure your Redux store to enable [debugging with the Redux DevTools Extension](https://github.com/reduxjs/redux-devtools/tree/main/extension)**. It allows you to view:
 
 - The history log of dispatched actions
 - The contents of each action
 - The final state after an action was dispatched
 - The diff in the state after an action
-- The [function stack trace showing the code where the action was actually dispatched](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/Features/Trace.md)
+- The [function stack trace showing the code where the action was actually dispatched](https://github.com/reduxjs/redux-devtools/blob/main/extension/docs/Features/Trace.md)
 
 In addition, the DevTools allows you to do "time-travel debugging", stepping back and forth in the action history to see the entire app state and UI at different points in time.
 
@@ -571,15 +583,23 @@ However, using action creators provides consistency, especially in cases where s
 
 **Prefer using action creators for dispatching any actions**. However, rather than writing action creators by hand, **we recommend using the `createSlice` function from Redux Toolkit, which will generate action creators and action types automatically**.
 
-### Use Thunks for Async Logic
+### Use RTK Query for Data Fetching
+
+In practice, **the single most common use case for side effects in a typical Redux app is fetching and caching data from the server**.
+
+Because of this, **we recommend using [RTK Query](../tutorials/essentials/part-7-rtk-query-basics.md) as the default approach for data fetching and caching in a Redux app**. RTK Query has been designed to correctly manage the logic for fetching data from the server as needed, caching it, deduplicating requests, updating components, and much more. We recommend _against_ writing data fetching logic by hand in almost all cases.
+
+### Use Thunks and Listeners for Other Async Logic
 
 Redux was designed to be extensible, and the middleware API was specifically created to allow different forms of async logic to be plugged into the Redux store. That way, users wouldn't be forced to learn a specific library like RxJS if it wasn't appropriate for their needs.
 
 This led to a wide variety of Redux async middleware addons being created, and that in turn has caused confusion and questions over which async middleware should be used.
 
-**We recommend [using the Redux Thunk middleware by default](https://github.com/reduxjs/redux-thunk)**, as it is sufficient for most typical use cases (such as basic AJAX data fetching). In addition, use of the `async/await` syntax in thunks makes them easier to read.
+**We recommend using [the Redux thunk middleware](../usage/writing-logic-thunks.mdx) for imperative logic**, such as complex sync logic that needs access to `dispatch` or `getState`, and moderately complex async logic. This includes use cases like moving logic out of components.
 
-If you have truly complex async workflows that involve things like cancelation, debouncing, running logic after a given action was dispatched, or "background-thread"-type behavior, then consider adding more powerful async middleware like Redux-Saga or Redux-Observable.
+**We recommend using [the RTK "listener" middleware"](https://redux-toolkit.js.org/api/createListenerMiddleware) for "reactive" logic that needs to respond to dispatched actions or state changes**, such as longer-running async workflows and "background thread"-type behavior.
+
+We recommend _against_ using the more complex Redux-Saga and Redux-Observable libraries in most cases, especially for async data fetching. Only use these libraries if no other tool is powerful enough to handle your use case.
 
 ### Move Complex Logic Outside Components
 

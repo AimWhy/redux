@@ -2,13 +2,13 @@
 id: part-3-state-actions-reducers
 title: 'Redux Fundamentals, Part 3: State, Actions, and Reducers'
 sidebar_label: 'State, Actions, and Reducers'
-hide_title: true
 description: 'The official Redux Fundamentals tutorial: learn how reducers update state in response to actions'
 ---
 
 import { DetailedExplanation } from '../../components/DetailedExplanation'
 
-# Redux Fundamentals, Part 3: State, Actions, and Reducers
+<!-- prettier-ignore -->
+import FundamentalsWarning from "../../components/_FundamentalsWarning.mdx";
 
 :::tip What You'll Learn
 
@@ -30,11 +30,7 @@ In [Part 2: Redux Concepts and Data Flow](./part-2-concepts-data-flow.md), we lo
 
 Now that you have some idea of what these pieces are, it's time to put that knowledge into practice. We're going to build a small example app to see how these pieces actually work together.
 
-:::caution
-
-**The example app is not meant as a complete production-ready project**. The goal is to help you learn core Redux APIs and usage patterns, and point you in the right direction using some limited examples. Also, some of the early pieces we build will be updated later on to show better ways to do things. **Please read through the whole tutorial to see all the concepts in use**.
-
-:::
+<FundamentalsWarning />
 
 ### Project Setup
 
@@ -44,7 +40,7 @@ To get started, you can open and fork this CodeSandbox:
 
 <iframe
   class="codesandbox"
-  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/master/?fontsize=14&hidenavigation=1&theme=dark&runonclick=1"
+  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/master/?codemirror=1&fontsize=14&hidenavigation=1&theme=dark&runonclick=1"
   title="redux-fundamentals-example-app"
   allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
   sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
@@ -70,7 +66,7 @@ The Redux template for CRA comes with Redux Toolkit and React-Redux already conf
 - Wrap your root React component with the `<Provider>` component from React-Redux, like:
 
 ```jsx
-ReactDOM.render(
+root.render(
   <Provider store={store}>
     <App />
   </Provider>,
@@ -82,7 +78,7 @@ ReactDOM.render(
 
 #### Exploring the Initial Project
 
-This initial project is based on [the standard Create-React-App](https://create-react-app.dev/docs/getting-started) project template, with some modifications.
+This initial project is based on [the standard Vite](https://create-react-app.dev/docs/getting-started) project template, with some modifications.
 
 Let's take a quick look at what the initial project contains:
 
@@ -91,7 +87,7 @@ Let's take a quick look at what the initial project contains:
   - `App.js`: the main application component.
   - `index.css`: styles for the complete application
   - `/api`
-    - `client.js`: a small AJAX request client that allows us to make GET and POST requests
+    - `client.js`: a small `fetch` wrapper client that allows us to make HTTP GET and POST requests
     - `server.js`: provides a fake REST API for our data. Our app will fetch data from these fake endpoints later.
   - `/exampleAddons`: contains some additional Redux addons that we'll use later in the tutorial to show how things work
 
@@ -160,7 +156,7 @@ think about these different kinds of categories to help understand how the diffe
 ### Designing the State Structure
 
 With Redux, **our application state is always kept in plain JavaScript objects and arrays**. That means you may not put
-other things into the Redux state - no class instances, built-in JS types like `Map` / `Set` `Promise` / `Date`, functions, or anything else that is not plain JS data.
+other things into the Redux state - no class instances, built-in JS types like `Map` / `Set` / `Promise` / `Date`, functions, or anything else that is not plain JS data.
 
 **The root Redux state value is almost always a plain JS object**, with other data nested inside of it.
 
@@ -191,7 +187,7 @@ const todoAppState = {
 }
 ```
 
-It's important to note that **it's okay to have other state values outside of Redux!**. This example is small enough so far that we actually do have all our state in the Redux store, but as we'll see later, some data really doesn't need to be kept in Redux (like "is this dropdown open?" or "current value of a form input").
+It's important to note that **it's okay to have other state values outside of Redux!** This example is small enough so far that we actually do have all our state in the Redux store, but as we'll see later, some data really doesn't need to be kept in Redux (like "is this dropdown open?" or "current value of a form input").
 
 ### Designing Actions
 
@@ -222,14 +218,14 @@ Based on that list of things that can happen, we can create a list of actions th
 
 - `{type: 'todos/todoAdded', payload: todoText}`
 - `{type: 'todos/todoToggled', payload: todoId}`
-- `{type: 'todos/colorSelected, payload: {todoId, color}}`
+- `{type: 'todos/colorSelected', payload: {todoId, color}}`
 - `{type: 'todos/todoDeleted', payload: todoId}`
 - `{type: 'todos/allCompleted'}`
 - `{type: 'todos/completedCleared'}`
 - `{type: 'filters/statusFilterChanged', payload: filterValue}`
 - `{type: 'filters/colorFilterChanged', payload: {color, changeType}}`
 
-In this case, the actions primarily have a single extra piece of data apiece, so we can put that directly in the `action.payload` field. We could have split the color filter behavior into two actions, one for "added" and one for "removed", but in this case
+In this case, the actions primarily have a single extra piece of data, so we can put that directly in the `action.payload` field. We could have split the color filter behavior into two actions, one for "added" and one for "removed", but in this case
 we'll do it as one action with an extra field inside specifically to show that we can have objects as an action payload.
 
 Like the state data, **actions should contain the smallest amount of information needed to describe what happened**.
@@ -274,11 +270,11 @@ export default function appReducer(state = initialState, action) {
 }
 ```
 
-A reducer may be called with `undefined` as the state value when the application is being initialized. If that happens, we need to provide an initial state value so the rest of the reducer code has something to work with. **Reducers normally use ES6 default argument syntax to provide initial state: `(state = initialState, action)`**.
+A reducer may be called with `undefined` as the state value when the application is being initialized. If that happens, we need to provide an initial state value so the rest of the reducer code has something to work with. **Reducers normally use default argument syntax to provide initial state: `(state = initialState, action)`**.
 
 Next, let's add the logic to handle the `'todos/todoAdded'` action.
 
-We know we need to check to see the current action's type matches that specific string.
+We first need to check if the current action's type matches that specific string.
 Then, we need to return a new object containing _all_ of the state, even for the fields
 that didn't change.
 
@@ -339,7 +335,7 @@ We said earlier that **reducers must _always_ follow some special rules**:
 - Logging a value to the console
 - Saving a file
 - Setting an async timer
-- Making an AJAX HTTP request
+- Making an HTTP request
 - Modifying some state that exists outside of a function, or mutating arguments to a function
 - Generating random numbers or unique random IDs (such as `Math.random()` or `Date.now()`)
 
@@ -698,9 +694,9 @@ values are the slice reducer functions that know how to update those slices of t
 
 Here's the contents of our app so far:
 
-<iframe 
+<iframe
   class="codesandbox"
-  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-1-combinedReducers/?fontsize=14&hidenavigation=1&module=%2Fsrc%2Freducer.js&theme=dark&runonclick=1"
+  src="https://codesandbox.io/embed/github/reduxjs/redux-fundamentals-example-app/tree/checkpoint-1-combinedReducers/?codemirror=1&fontsize=14&hidenavigation=1&module=%2Fsrc%2Freducer.js&theme=dark&runonclick=1"
   title="redux-fundamentals-example-app"
   allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
   sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
@@ -722,7 +718,7 @@ Here's the contents of our app so far:
   - Reducers must always follow special rules:
     - Only calculate the new state based on the `state` and `action` arguments
     - Never mutate the existing `state` - always return a copy
-    - No "side effects" like AJAX calls or async logic
+    - No "side effects" like HTTP requests or async logic
 - **Reducers should be split up to make them easier to read**
   - Reducers are usually split based on top-level state keys or "slices" of state
   - Reducers are usually written in "slice" files, organized into "feature" folders
